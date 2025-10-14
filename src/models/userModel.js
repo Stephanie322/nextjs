@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 
 const userSchema = new mongoose.Schema({
+  nickname:{
+        type:String,
+        required:[true,"please provide a nickname"]
+    },
   username:{
     type:String,
     required:[true,"Please provide a email"],
@@ -16,6 +20,10 @@ const userSchema = new mongoose.Schema({
     type:String,
     required:[true,"Please provide a password"]
   },
+  palname:{
+        type:String,
+        required:[true,"please provide a palname"]
+    },
   isVerified:{
     type:Boolean,
     default:false,

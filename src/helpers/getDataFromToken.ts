@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import jwt, { TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export const getDataFromToken=(request:NextRequest)=>{
     try{

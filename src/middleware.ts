@@ -1,37 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-    const path = request.nextUrl.pathname;
-    const token = request.cookies.get('token')?.value || '';
+  const path = request.nextUrl.pathname;
 
-    // Public paths that anyone can access
-    const publicPaths = ['/login', '/signup'];
+  // ✅ allow verifyemail to always pass through (no redirect)
+  const isVerifyEmailPath = path.startsWith('/verifyemail');
+  const isPublicPath = path === '/login' || path === '/signup';
 
-    // Protected paths that require login
-    const protectedPaths = ['/profile'];
+  const token = request.cookies.get('token')?.value;
 
-    const isPublic = publicPaths.includes(path);
-    const isProtected = protectedPaths.some(p => path.startsWith(p));
+  // 🚫 Logged-in users trying to access login/signup → redirect home
+  if (!isVerifyEmailPath && isPublicPath && token && token !== '' && token !== 'undefined') {
+    return NextResponse.redirect(new URL('/', request.nextUrl));
+  }
 
-    // If user is logged in and tries to access a public page, redirect home
-    if (isPublic && token) {
-        return NextResponse.redirect(new URL('/', request.nextUrl));
-    }
+  // 🚫 Not logged-in users trying to access protected paths → redirect login
+  if (!isPublicPath && !isVerifyEmailPath && (!token || token === '' || token === 'undefined')) {
+    return NextResponse.redirect(new URL('/login', request.nextUrl));
+  }
 
-    // If user is not logged in and tries to access a protected page, redirect to login
-    if (!isPublic && isProtected && !token) {
-        return NextResponse.redirect(new URL('/login', request.nextUrl));
-    }
-
-
-    return NextResponse.next();
+  // ✅ Everything else continues
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher: [
-        '/',           // Home page
-        '/profile/:path*', // Match all dynamic profile routes like /profile/123
-        '/login',
-        '/signup',
-    ],
+  matcher: ['/', '/profile/:path*', '/login', '/signup', '/verifyemail/:path*'],
 };

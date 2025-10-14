@@ -1,0 +1,82 @@
+"use client"
+import { useState } from "react";
+import axios from "axios";
+
+export default function AddDiaryEntry(){
+    const [title,setTitle]=useState("");
+    const [content,setContent]=useState("");
+    const[date,setDate]=useState(new Date().toISOString().split("T")[0]);
+    const [message,setMessage]=useState("");
+    const [loading,setLoading]=useState(false);
+
+    const handleSubmit = async (e:any )=>{
+        e.preventDefault();
+        setLoading(true);
+        setMessage("");
+
+        try{
+            const res = await axios.post("/api/users/entry",
+                {title,content,date},
+                {withCredentials:true}
+            );
+            setMessage("✨ Diary entry added successfully!");
+            setTitle("");
+            setContent("");
+        }catch(err:any){
+          if(err.response){
+            setMessage(err.response.data.error || "something went wrong");
+          }else{
+            setMessage("Network error");
+          }
+        }finally{
+            setLoading(false);
+        }
+    };
+    return(
+         <div className="max-w-lg mx-auto p-6 mt-10 bg-pink-50 rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold mb-4 text-pink-700">📓 Add Diary Entry</h2>
+
+      {message && (
+        <p className={`mb-4 p-2 rounded ${message.includes("success") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+          {message}
+        </p>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="text"
+          placeholder="Title (optional)"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400"
+        />
+
+        <textarea
+          placeholder="Write your diary entry..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="border border-pink-300 p-3 rounded h-48 resize-none focus:outline-none focus:ring-2 focus:ring-pink-400"
+          required
+        />
+
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400"
+        />
+
+        <button
+          type="submit"
+          className={`bg-pink-500 text-white p-3 rounded-lg font-bold hover:bg-pink-600 transition-colors ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Add Entry"}
+        </button>
+      </form>
+    </div>
+
+    );
+}
