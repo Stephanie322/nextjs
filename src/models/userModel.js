@@ -20,10 +20,6 @@ const userSchema = new mongoose.Schema({
     type:String,
     required:[true,"Please provide a password"]
   },
-  palname:{
-        type:String,
-        required:[true,"please provide a palname"]
-    },
   isVerified:{
     type:Boolean,
     default:false,

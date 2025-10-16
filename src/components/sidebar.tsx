@@ -34,7 +34,7 @@ export default function Sidebar() {
             <Link href="/app/entry" className="nav-link text-white">Me</Link>
           </li>
           <li className="hover:bg-pink-400">
-            <Link href="/dashboard" className="nav-link text-white">Entries Display</Link>
+            <Link href="/display" className="nav-link text-white">Entries Display</Link>
           </li>
           <li className="hover:bg-pink-400">
             <Link href="/entry" className="nav-link text-white">Entry</Link>
