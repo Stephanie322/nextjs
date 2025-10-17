@@ -1,43 +1,53 @@
-"use client"
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function AddDiaryEntry(){
-    const [title,setTitle]=useState("");
-    const [content,setContent]=useState("");
-    const[date,setDate]=useState(new Date().toISOString().split("T")[0]);
-    const [message,setMessage]=useState("");
-    const [loading,setLoading]=useState(false);
+export default function AddDiaryEntry() {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e:any )=>{
-        e.preventDefault();
-        setLoading(true);
-        setMessage("");
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
-        try{
-            const res = await axios.post("/api/users/entry",
-                {title,content,date},
-                {withCredentials:true}
-            );
-            setMessage("✨ Diary entry added successfully!");
-            setTitle("");
-            setContent("");
-        }catch(err:any){
-          if(err.response){
-            setMessage(err.response.data.error || "something went wrong");
-          }else{
-            setMessage("Network error");
-          }
-        }finally{
-            setLoading(false);
-        }
-    };
-    return(
-         <div className="max-w-lg mx-auto p-6 mt-10 bg-pink-50 rounded-2xl shadow-lg">
-      <h2 className="text-3xl font-bold mb-4 text-pink-700">📓 Add Diary Entry</h2>
+    try {
+      const res = await axios.post(
+        "/api/users/entry",
+        { title, content, date },
+        { withCredentials: true }
+      );
+
+      
+      setMessage("✨ Diary entry added successfully!");
+      setTitle("");
+      setContent("");
+    } catch (err: any) {
+      if (err.response) {
+        setMessage(err.response.data.error || "Something went wrong");
+      } else {
+        setMessage("Network error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-lg mx-auto p-6 mt-10 bg-pink-50 rounded-2xl shadow-lg">
+      <h2 className="text-pink-900 text-3xl font-bold mb-4">📓 Add Diary Entry</h2>
 
       {message && (
-        <p className={`mb-4 p-2 rounded ${message.includes("success") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+        <p
+          className={`mb-4 p-2 rounded ${
+            message.includes("success")
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
           {message}
         </p>
       )}
@@ -48,14 +58,17 @@ export default function AddDiaryEntry(){
           placeholder="Title (optional)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400 text-pink-900"
         />
+
+        {/* Greeting above textarea */}
+        <p className="text-pink-700 font-semibold mb-2">Dear diary</p>
 
         <textarea
           placeholder="Write your diary entry..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="border border-pink-300 p-3 rounded h-48 resize-none focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="border border-pink-300 p-3 rounded h-48 resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 text-pink-900"
           required
         />
 
@@ -63,7 +76,7 @@ export default function AddDiaryEntry(){
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400 text-pink-900"
         />
 
         <button
@@ -77,6 +90,5 @@ export default function AddDiaryEntry(){
         </button>
       </form>
     </div>
-
-    );
+  );
 }

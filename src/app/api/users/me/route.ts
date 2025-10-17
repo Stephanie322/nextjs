@@ -10,6 +10,7 @@ export async function GET(request:NextRequest){
     try{
         //get user ID or nickname from the token
         const userId = await getDataFromToken(request);
+         console.log(userId);
 
         if(!userId){
             return NextResponse.json({error:"Unauthorized"},{status:401});
