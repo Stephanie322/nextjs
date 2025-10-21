@@ -1,5 +1,6 @@
-"use client";
+'use client';
 export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ export default function VerifyEmailPage() {
       }
 
       try {
+        // Call API route dynamically at runtime
         const res = await axios.post("/api/users/verifyemail", { token });
 
         if (res.data.success) {
@@ -29,9 +31,10 @@ export default function VerifyEmailPage() {
         } else {
           setMessage(res.data.error || "Verification failed.");
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error(err);
-        setMessage("Server error. Try again later.");
+        const msg = err instanceof Error ? err.message : "Server error. Try again later.";
+        setMessage(msg);
       } finally {
         setLoading(false);
       }
