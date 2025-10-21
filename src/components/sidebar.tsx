@@ -39,9 +39,6 @@ export default function Sidebar() {
 
         <ul className="flex flex-col space-y-2">
           <li className="hover:bg-pink-400">
-            <Link href="/app/entry" className="nav-link text-white">Me</Link>
-          </li>
-          <li className="hover:bg-pink-400">
             <Link href="/display" className="nav-link text-white">Entries Display</Link>
           </li>
           <li className="hover:bg-pink-400">
