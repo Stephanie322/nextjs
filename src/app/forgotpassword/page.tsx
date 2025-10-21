@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent, ChangeEvent } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
