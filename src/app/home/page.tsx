@@ -12,9 +12,16 @@ export default function HomePage() {
       try {
         const res = await axios.get("/api/users/me");
         setNickname(res.data.data.nickname);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
-        toast.error(err.response?.data?.error || "Failed to load user");
+
+        if (axios.isAxiosError(err)) {
+          toast.error(err.response?.data?.error || "Failed to load user");
+        } else if (err instanceof Error) {
+          toast.error(err.message);
+        } else {
+          toast.error("Failed to load user");
+        }
       }
     }
     fetchUser();

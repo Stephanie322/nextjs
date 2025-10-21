@@ -27,7 +27,7 @@ export async function POST(request:NextRequest) {
             username,
             email,
             password:hashedPassword,
-            palname
+            
         });
         const savedUser = await newUser.save();
         console.log(savedUser);
@@ -37,8 +37,9 @@ export async function POST(request:NextRequest) {
         return NextResponse.json({message:"User created successfully",success:true,savedUser});
 
 
-    }catch(error:any){
-        return NextResponse.json({error: error.message},
+    }catch(error:unknown){
+        const message = error instanceof Error?error.message:"Server error";
+        return NextResponse.json({error:message},
         {status:500})
     }
     

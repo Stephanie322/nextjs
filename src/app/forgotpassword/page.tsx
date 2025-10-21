@@ -1,27 +1,31 @@
 "use client";
-import { useState } from "react";
-import axios from "axios";
+import { useState, FormEvent, ChangeEvent } from "react";
+import axios, { AxiosError } from "axios";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
       await axios.post("/api/users/sendemail", {
-        
-
         email,
         emailType: "RESET",
       });
       setMessage("✅ Password reset email sent. Check your inbox!");
-    } catch (err: any) {
-      setMessage(err.response?.data?.error || "Something went wrong.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setMessage(err.response?.data?.error || "Something went wrong.");
+      } else if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage("Network error");
+      }
     } finally {
       setLoading(false);
     }
@@ -41,7 +45,7 @@ export default function ForgotPasswordPage() {
           type="email"
           placeholder="Enter your email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           className="border border-pink-300 p-2 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400"
           required
         />

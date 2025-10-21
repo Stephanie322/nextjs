@@ -2,7 +2,13 @@ import nodemailer from "nodemailer";
 import User from "@/models/userModel";
 import bcryptjs from "bcryptjs";
 
-export const sendEmail = async ({ email, emailType, userId }: any) => {
+interface SendEmailParams {
+  email: string;
+  emailType: "VERIFY" | "RESET";
+  userId: string | number;
+}
+
+export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) => {
   try {
     const hashedToken = await bcryptjs.hash(userId.toString(), 10);
 
@@ -27,7 +33,6 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       },
     });
 
-    // Dynamically pick route path
     const pagePath = emailType === "VERIFY" ? "verifyemail" : "changepassword";
 
     const mailOptions = {
@@ -36,8 +41,7 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       subject:
         emailType === "VERIFY" ? "Verify your email" : "Reset your password",
       html: `<p>
-        Click <a href="${process.env.DOMAIN}/${pagePath}?token=${hashedToken}">
-        here</a> to ${
+        Click <a href="${process.env.DOMAIN}/${pagePath}?token=${hashedToken}">here</a> to ${
           emailType === "VERIFY" ? "verify your email" : "reset your password"
         } or copy-paste the link below in your browser:
         <br>${process.env.DOMAIN}/${pagePath}?token=${hashedToken}
@@ -46,7 +50,12 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
 
     const mailResponse = await transport.sendMail(mailOptions);
     return mailResponse;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    } else {
+      throw new Error("Failed to send email");
+    }
   }
 };
+

@@ -2,7 +2,7 @@ import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { NextRequest,NextResponse } from "next/server";
 import User from "@/models/userModel";
 import {connect} from "@/dbConfig/dbConfig";
-import { use } from "react";
+
 
 connect();
 
@@ -25,8 +25,9 @@ export async function GET(request:NextRequest){
             data:user,
         });
 
-    }catch(error:any){
+    }catch(error:unknown){
+        const message = error instanceof Error?error.message:"Server error";
          console.error("API Error:", error);
-         return NextResponse.json({ error: error.message || "Server error" },{status:500});
+         return NextResponse.json({ error:message},{status:500});
     }
 }

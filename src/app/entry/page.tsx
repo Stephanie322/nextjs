@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import axios from "axios";
 
 export default function AddDiaryEntry() {
@@ -9,25 +9,27 @@ export default function AddDiaryEntry() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "/api/users/entry",
         { title, content, date },
         { withCredentials: true }
       );
 
-      
       setMessage("✨ Diary entry added successfully!");
       setTitle("");
       setContent("");
-    } catch (err: any) {
-      if (err.response) {
-        setMessage(err.response.data.error || "Something went wrong");
+    } catch (err: unknown) {
+      // TypeScript-safe handling
+      if (axios.isAxiosError(err)) {
+        setMessage(err.response?.data?.error || "Something went wrong");
+      } else if (err instanceof Error) {
+        setMessage(err.message);
       } else {
         setMessage("Network error");
       }
@@ -57,17 +59,16 @@ export default function AddDiaryEntry() {
           type="text"
           placeholder="Title (optional)"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
           className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400 text-pink-900"
         />
 
-        {/* Greeting above textarea */}
         <p className="text-pink-700 font-semibold mb-2">Dear diary</p>
 
         <textarea
           placeholder="Write your diary entry..."
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
           className="border border-pink-300 p-3 rounded h-48 resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 text-pink-900"
           required
         />
@@ -75,7 +76,7 @@ export default function AddDiaryEntry() {
         <input
           type="date"
           value={date}
-          onChange={(e) => setDate(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setDate(e.target.value)}
           className="border border-pink-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-pink-400 text-pink-900"
         />
 

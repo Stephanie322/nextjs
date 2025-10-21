@@ -24,7 +24,8 @@ export async function POST(req:NextRequest){
 
     return NextResponse.json(entry,{status:201});
 
-   }catch(err:any){
-     return NextResponse.json({ error: err.message || "Something went wrong" }, { status: 400 });
+   }catch(err:unknown){
+    const message = err instanceof Error ? err.message : "Server error";
+     return NextResponse.json({ error: message }, { status: 400 });
    }
 }

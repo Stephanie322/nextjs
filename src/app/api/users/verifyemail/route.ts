@@ -39,10 +39,11 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Email verified successfully",
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error? err.message:"Server error";
     console.error("Verify email error:", err);
     return NextResponse.json(
-      { error: err.message || "Server error" },
+      { error: message  },
       { status: 500 }
     );
   }

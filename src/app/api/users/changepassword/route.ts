@@ -43,10 +43,11 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Password changed successfully",
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Change password error:", err);
+    const message = err instanceof Error ? err.message : "server error";
     return NextResponse.json(
-      { error: err.message || "Server error" },
+      { error: message},
       { status: 500 }
     );
   }

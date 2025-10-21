@@ -21,9 +21,10 @@ export async function POST(request:NextRequest){
         const entry = await DiaryEntry.findOne({userId,date:queryDate});
 
         return NextResponse.json({entry});
-    }catch(err:any){
+    }catch(err:unknown){
          console.error("API Error:", err);
-         return NextResponse.json({ error: err.message || "Server error" }, { status: 500 });
+         const message = err instanceof Error ? err.message:"Server error";
+         return NextResponse.json({ error: message }, { status: 500 });
 
     }
 }

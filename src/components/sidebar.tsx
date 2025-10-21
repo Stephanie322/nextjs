@@ -16,9 +16,17 @@ export default function Sidebar() {
       // Redirect to login and refresh to reset server-side state
       router.push('/login');
       router.refresh();
-    } catch (error: any) {
-      console.error(error);
-      toast.error("Failed to logout");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error(err.response?.data || err.message);
+        toast.error("Failed to logout");
+      } else if (err instanceof Error) {
+        console.error(err.message);
+        toast.error("Failed to logout");
+      } else {
+        console.error(err);
+        toast.error("Failed to logout");
+      }
     }
   };
 

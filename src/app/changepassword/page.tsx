@@ -33,7 +33,9 @@ export default function ChangePasswordPage() {
       } else {
         setMessage(res.data.error || "Something went wrong.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error?err.message:"Oops an error"
+      console.log(message);
       setMessage("Failed to change password.");
     } finally {
       setLoading(false);
